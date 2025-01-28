@@ -15,7 +15,20 @@ from ._output_parser import EntityExtractionOutputParser
 _DEFAULT_TUPLE_DELIMITER = "<|>"
 _DEFAULT_RECORD_DELIMITER = "##"
 _DEFAULT_COMPLETION_DELIMITER = "<|COMPLETE|>"
-_DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
+_DEFAULT_ENTITY_TYPES = [
+    "Class",
+    "Function",
+    "ClassMethod",
+    "Parameter",
+    "ObjectAttribute",
+    "MetricUtility",
+    "DataType",
+    "AlgorithmConcept",
+    "MLTask",
+    "CodeExample",
+    "ExceptionWarning",
+    "Module"
+]
 
 
 class EntityExtractionPromptBuilder(IndexingPromptBuilder):
