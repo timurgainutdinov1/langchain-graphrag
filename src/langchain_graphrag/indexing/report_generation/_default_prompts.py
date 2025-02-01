@@ -1,20 +1,20 @@
 # ruff: noqa
 
 DEFAULT_PROMPT = """
-You are an AI assistant that helps a human analyst to perform general information discovery. Information discovery is the process of identifying and assessing relevant information associated with certain entities (e.g., organizations and individuals) within a network.
+You are an AI assistant that helps a human analyst perform information discovery on scikit-learn documentation. In this task, you will analyze a knowledge graph extracted from scikit-learn documentation. The graph is composed of various entities (e.g., Estimator, Transformer, Method, Parameter, Attribute, Metric, Dataset, Task, Module, Exception, Concept) and the relationships between them. Your goal is to write a comprehensive report on a cluster of interrelated entities from this knowledge graph.
 
 # Goal
-Write a comprehensive report of a community, given a list of entities that belong to the community as well as their relationships and optional associated claims. The report will be used to inform decision-makers about information associated with the community and their potential impact. The content of this report includes an overview of the community's key entities, their legal compliance, technical capabilities, reputation, and noteworthy claims.
+Write a detailed report on a scikit-learn documentation cluster, given a list of entities (from the knowledge graph) that belong to the cluster along with their relationships and any associated evidence. This report will help decision-makers understand the structure, significance, and interdependencies of key components within scikit-learn. The content of the report includes an overview of the cluster's key entities, their roles in the library, technical relationships, potential impact on usage, and any notable observations.
 
 # Report Structure
 
 The report should include the following sections:
 
-- TITLE: community's name that represents its key entities - title should be short but specific. When possible, include representative named entities in the title.
-- SUMMARY: An executive summary of the community's overall structure, how its entities are related to each other, and significant information associated with its entities.
-- IMPACT SEVERITY RATING: a float score between 0-10 that represents the severity of IMPACT posed by entities within the community.  IMPACT is the scored importance of a community.
-- RATING EXPLANATION: Give a single sentence explanation of the IMPACT severity rating.
-- DETAILED FINDINGS: A list of 5-10 key insights about the community. Each insight should have a short summary followed by multiple paragraphs of explanatory text grounded according to the grounding rules below. Be comprehensive.
+- TITLE: A concise title that represents the key focus of the cluster. When possible, include representative named entities (e.g., a prominent Estimator or Module) in the title.
+- SUMMARY: An executive summary that describes the overall structure of the cluster, how its entities are interconnected, and significant insights regarding the components.
+- IMPACT SEVERITY RATING: a float score between 0-10 that represents the significance or criticality of this documentation cluster. This score reflects the importance of the cluster in understanding or using scikit-learn.
+- RATING EXPLANATION: A single sentence explaining the impact severity rating.
+- DETAILED FINDINGS: A list of 5-10 key insights about the cluster. Each insight should include a brief summary and an extended explanation that is grounded by data references according to the rules below. The explanation should discuss aspects such as the role of an Estimator, the functionality of a Transformer, how Parameters influence behavior, interconnections between Methods and Attributes, or the significance of a particular Module or Concept.
 
 Return output as a well-formed JSON-formatted string with the following format:
     {{
@@ -24,11 +24,11 @@ Return output as a well-formed JSON-formatted string with the following format:
         "rating_explanation": <rating_explanation>,
         "findings": [
             {{
-                "summary":<insight_1_summary>,
+                "summary": <insight_1_summary>,
                 "explanation": <insight_1_explanation>
             }},
             {{
-                "summary":<insight_2_summary>,
+                "summary": <insight_2_summary>,
                 "explanation": <insight_2_explanation>
             }}
         ]
@@ -36,19 +36,12 @@ Return output as a well-formed JSON-formatted string with the following format:
 
 # Grounding Rules
 
-Points supported by data should list their data references as follows:
+Whenever you support a point with data, list the corresponding data references as follows:
 
-"This is an example sentence supported by multiple data references [Data: <dataset name> (record ids); <dataset name> (record ids)]."
+"This statement is supported by multiple data references [Data: <dataset name> (record ids); <dataset name> (record ids)]."
 
-Do not list more than 5 record ids in a single reference. Instead, list the top 5 most relevant record ids and add "+more" to indicate that there are more.
-
-For example:
-"Person X is the owner of Company Y and subject to many allegations of wrongdoing [Data: Reports (1), Entities (5, 7); Relationships (23); Claims (7, 2, 34, 64, 46, +more)]."
-
-where 1, 5, 7, 23, 2, 34, 46, and 64 represent the id (not the index) of the relevant data record.
-
-Do not include information where the supporting evidence for it is not provided.
-
+- Do not list more than 5 record ids in a single reference. If there are more, list the top 5 most relevant record ids and append "+more" to indicate additional records.
+- Only include information that is directly supported by the provided evidence.
 
 # Example Input
 -----------
@@ -57,60 +50,52 @@ Text:
 Entities
 
 id,entity,description
-5,VERDANT OASIS PLAZA,Verdant Oasis Plaza is the location of the Unity March
-6,HARMONY ASSEMBLY,Harmony Assembly is an organization that is holding a march at Verdant Oasis Plaza
+101,LOGISTICREGRESSION,LogisticRegression is an Estimator used for classification tasks.
+102,SKLEARN.MODEL_SELECTION,The sklearn.model_selection module provides tools for model evaluation and selection.
+103,FIT,The fit method is used by Estimators to train on data.
+104,C,Parameter controlling regularization strength in LogisticRegression.
+105,CROSS-VALIDATION,Concept describing a technique to assess model performance.
 
 Relationships
 
 id,source,target,description
-37,VERDANT OASIS PLAZA,UNITY MARCH,Verdant Oasis Plaza is the location of the Unity March
-38,VERDANT OASIS PLAZA,HARMONY ASSEMBLY,Harmony Assembly is holding a march at Verdant Oasis Plaza
-39,VERDANT OASIS PLAZA,UNITY MARCH,The Unity March is taking place at Verdant Oasis Plaza
-40,VERDANT OASIS PLAZA,TRIBUNE SPOTLIGHT,Tribune Spotlight is reporting on the Unity march taking place at Verdant Oasis Plaza
-41,VERDANT OASIS PLAZA,BAILEY ASADI,Bailey Asadi is speaking at Verdant Oasis Plaza about the march
-43,HARMONY ASSEMBLY,UNITY MARCH,Harmony Assembly is organizing the Unity March
-
+201,LOGISTICREGRESSION,FIT,The fit method is implemented by LogisticRegression.
+202,LOGISTICREGRESSION,C,The parameter C adjusts the regularization in LogisticRegression.
+203,LOGISTICREGRESSION,SKLEARN.MODEL_SELECTION,LogisticRegression is evaluated using techniques provided in sklearn.model_selection.
+204,LOGISTICREGRESSION,CROSS-VALIDATION,Cross-validation is used to validate LogisticRegression.
+---------------------------
 Output:
 {{
-    "title": "Verdant Oasis Plaza and Unity March",
-    "summary": "The community revolves around the Verdant Oasis Plaza, which is the location of the Unity March. The plaza has relationships with the Harmony Assembly, Unity March, and Tribune Spotlight, all of which are associated with the march event.",
-    "rating": 5.0,
-    "rating_explanation": "The impact severity rating is moderate due to the potential for unrest or conflict during the Unity March.",
+    "title": "LogisticRegression and Model Evaluation",
+    "summary": "The cluster centers on LogisticRegression, a key Estimator, and its evaluation methods. The report details how LogisticRegression employs the fit method and utilizes parameters like C, while also being closely associated with evaluation techniques and cross-validation concepts provided by the sklearn.model_selection module.",
+    "rating": 7.5,
+    "rating_explanation": "The cluster is critical due to its central role in classification tasks and model evaluation within scikit-learn.",
     "findings": [
         {{
-            "summary": "Verdant Oasis Plaza as the central location",
-            "explanation": "Verdant Oasis Plaza is the central entity in this community, serving as the location for the Unity March. This plaza is the common link between all other entities, suggesting its significance in the community. The plaza's association with the march could potentially lead to issues such as public disorder or conflict, depending on the nature of the march and the reactions it provokes. [Data: Entities (5), Relationships (37, 38, 39, 40, 41,+more)]"
+            "summary": "Central role of LogisticRegression",
+            "explanation": "LogisticRegression is a fundamental Estimator in scikit-learn, widely used for classification. It serves as the core component of this cluster, influencing many downstream processes such as training (via the fit method) and parameter tuning (through the parameter C). Its role is pivotal for understanding classification workflows. [Data: Entities (101); Relationships (201, 202)]"
         }},
         {{
-            "summary": "Harmony Assembly's role in the community",
-            "explanation": "Harmony Assembly is another key entity in this community, being the organizer of the march at Verdant Oasis Plaza. The nature of Harmony Assembly and its march could be a potential source of threat, depending on their objectives and the reactions they provoke. The relationship between Harmony Assembly and the plaza is crucial in understanding the dynamics of this community. [Data: Entities(6), Relationships (38, 43)]"
-        }},
-        {{
-            "summary": "Unity March as a significant event",
-            "explanation": "The Unity March is a significant event taking place at Verdant Oasis Plaza. This event is a key factor in the community's dynamics and could be a potential source of threat, depending on the nature of the march and the reactions it provokes. The relationship between the march and the plaza is crucial in understanding the dynamics of this community. [Data: Relationships (39)]"
-        }},
-        {{
-            "summary": "Role of Tribune Spotlight",
-            "explanation": "Tribune Spotlight is reporting on the Unity March taking place in Verdant Oasis Plaza. This suggests that the event has attracted media attention, which could amplify its impact on the community. The role of Tribune Spotlight could be significant in shaping public perception of the event and the entities involved. [Data: Relationships (40)]"
+            "summary": "Integration of model evaluation",
+            "explanation": "The relationship between LogisticRegression and the sklearn.model_selection module underscores the importance of proper model evaluation. Techniques provided by this module, such as cross-validation, are essential for assessing the performance and robustness of LogisticRegression. [Data: Entities (102, 105); Relationships (203, 204)]"
         }}
     ]
 }}
 
-
 # Real Data
 
-Use the following text for your answer. Do not make anything up in your answer.
+Use the following text for your answer. Do not make anything up.
 
 Text:
 {input_text}
 
 The report should include the following sections:
 
-- TITLE: community's name that represents its key entities - title should be short but specific. When possible, include representative named entities in the title.
-- SUMMARY: An executive summary of the community's overall structure, how its entities are related to each other, and significant information associated with its entities.
-- IMPACT SEVERITY RATING: a float score between 0-10 that represents the severity of IMPACT posed by entities within the community.  IMPACT is the scored importance of a community.
-- RATING EXPLANATION: Give a single sentence explanation of the IMPACT severity rating.
-- DETAILED FINDINGS: A list of 5-10 key insights about the community. Each insight should have a short summary followed by multiple paragraphs of explanatory text grounded according to the grounding rules below. Be comprehensive.
+- TITLE: A concise title that represents the key focus of the cluster. When possible, include representative named entities in the title.
+- SUMMARY: An executive summary that describes the overall structure of the cluster, how its entities are interconnected, and significant insights regarding the components.
+- IMPACT SEVERITY RATING: a float score between 0-10 that represents the significance or criticality of this documentation cluster.
+- RATING EXPLANATION: A single sentence explaining the impact severity rating.
+- DETAILED FINDINGS: A list of 5-10 key insights about the cluster. Each insight should include a brief summary and an extended explanation, grounded with data references according to the grounding rules provided.
 
 Return output as a well-formed JSON-formatted string with the following format:
     {{
@@ -120,32 +105,15 @@ Return output as a well-formed JSON-formatted string with the following format:
         "rating_explanation": <rating_explanation>,
         "findings": [
             {{
-                "summary":<insight_1_summary>,
+                "summary": <insight_1_summary>,
                 "explanation": <insight_1_explanation>
             }},
             {{
-                "summary":<insight_2_summary>,
+                "summary": <insight_2_summary>,
                 "explanation": <insight_2_explanation>
             }}
         ]
     }}
 
-# Grounding Rules
-
-Points supported by data should list their data references as follows:
-
-"This is an example sentence supported by multiple data references [Data: <dataset name> (record ids); <dataset name> (record ids)]."
-
-Do not list more than 5 record ids in a single reference. Instead, list the top 5 most relevant record ids and add "+more" to indicate that there are more.
-
-For example:
-"Person X is the owner of Company Y and subject to many allegations of wrongdoing [Data: Reports (1), Entities (5, 7); Relationships (23); Claims (7, 2, 34, 64, 46, +more)]."
-
-where 1, 5, 7, 23, 2, 34, 46, and 64 represent the id (not the index) of the relevant data record.
-
-Do not include information where the supporting evidence for it is not provided.
-
 Output:
-
-
 """

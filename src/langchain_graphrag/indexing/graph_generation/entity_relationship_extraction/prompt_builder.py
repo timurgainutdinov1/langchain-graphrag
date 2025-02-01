@@ -16,18 +16,17 @@ _DEFAULT_TUPLE_DELIMITER = "<|>"
 _DEFAULT_RECORD_DELIMITER = "##"
 _DEFAULT_COMPLETION_DELIMITER = "<|COMPLETE|>"
 _DEFAULT_ENTITY_TYPES = [
-    "Class",
-    "Function",
-    "ClassMethod",
-    "Parameter",
-    "ObjectAttribute",
-    "MetricUtility",
-    "DataType",
-    "AlgorithmConcept",
-    "MLTask",
-    "CodeExample",
-    "ExceptionWarning",
-    "Module"
+    "Estimator",    # Классы для обучения моделей (например, LogisticRegression, RandomForestClassifier).
+    "Transformer",  # Классы для преобразования данных (например, StandardScaler, PCA).
+    "Method",       # Методы классов (например, fit, predict, transform).
+    "Parameter",    # Гиперпараметры и параметры конструкторов (например, n_estimators, C).
+    "Attribute",    # Атрибуты моделей, получаемые после обучения (например, coef_, feature_importances_).
+    "Metric",       # Метрики для оценки качества моделей (например, accuracy_score, mean_squared_error).
+    "Dataset",      # Наборы данных, используемые в примерах (например, iris, digits).
+    "Task",         # Задачи машинного обучения (например, классификация, регрессия, кластеризация).
+    "Module",       # Подмодули библиотеки (например, sklearn.model_selection, sklearn.metrics).
+    "Exception",    # Исключения и ошибки, выдаваемые библиотекой (например, NotFittedError).
+    "Concept"       # Основные концепции и методологии (например, кросс-валидация, регуляризация).
 ]
 
 
